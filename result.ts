@@ -1,5 +1,4 @@
 import { toString } from "./utils";
-import { Option, None, Some } from "./option";
 
 /*
  * Missing Rust Result type methods:
@@ -80,13 +79,6 @@ interface BaseResult<T, E>
    * This function can be used to pass through a successful result while handling an error.
    */
   mapErr<F>(mapper: (val: E) => F): Result<T, F>;
-
-  /**
-   *  Converts from `Result<T, E>` to `Option<T>`, discarding the error if any
-   *
-   *  Similar to rust's `ok` method
-   */
-  toOption(): Option<T>;
 }
 
 /**
@@ -168,10 +160,6 @@ export class ErrImpl<E> implements BaseResult<never, E> {
 
   mapErr<E2>(mapper: (err: E) => E2): Err<E2> {
     return new Err(mapper(this.val));
-  }
-
-  toOption(): Option<never> {
-    return None;
   }
 
   toString(): string {
@@ -259,10 +247,6 @@ export class OkImpl<T> implements BaseResult<T, never> {
 
   mapErr(_mapper: unknown): Ok<T> {
     return this;
-  }
-
-  toOption(): Option<T> {
-    return Some(this.val);
   }
 
   /**
